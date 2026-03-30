@@ -3,14 +3,13 @@ package com.sena.api_producto.service;
 import com.sena.api_producto.exception.RecursoNoEncontrado;
 import com.sena.api_producto.model.Ventas;
 import org.springframework.stereotype.Service;
-
+import com.sena.api_producto.repository.VentasRepository;
 import java.util.List;
 
 
 
 
 
-import com.sena.api_producto.repository.VentasRepository;
 
 @Service
 public class VentasService {
