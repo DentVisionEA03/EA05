@@ -46,7 +46,15 @@ public class CitaController {
     }
 
     @PutMapping("/{id}")
-    public Cita actualizar(@PathVariable Long id, @RequestBody Cita c) {
+    public Cita actualizar(@PathVariable Long id, @Valid @RequestBody CitaDTO dto) {
+
+        Cita c = new Cita();
+        c.setPaciente(dto.getPaciente());
+        c.setOdontologo(dto.getOdontologo());
+        c.setFecha(LocalDate.parse(dto.getFecha()));
+        c.setHora(LocalTime.parse(dto.getHora()));
+        c.setEstado(EstadoCita.valueOf(dto.getEstado().toUpperCase()));
+
         return service.actualizar(id, c);
     }
 
