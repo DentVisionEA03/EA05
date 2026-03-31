@@ -2,15 +2,17 @@ package com.sena.api_producto.controller;
 
 import com.sena.api_producto.model.Cita;
 import com.sena.api_producto.service.CitaService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 import com.sena.api_producto.dto.CitaDTO;
 import com.sena.api_producto.model.enums.EstadoCita;
+
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/citas")
@@ -29,31 +31,53 @@ public class CitaController {
 
     @GetMapping("/{id}")
     public Cita obtener(@PathVariable Long id) {
-        return service.buscarPorId(id);
+        Cita cita = service.buscarPorId(id);
+        if (cita == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada");
+        }
+        return cita;
     }
 
     @PostMapping
     public Cita crear(@Valid @RequestBody CitaDTO dto) {
-
         Cita c = new Cita();
         c.setPaciente(dto.getPaciente());
         c.setOdontologo(dto.getOdontologo());
-        c.setFecha(LocalDate.parse(dto.getFecha()));
-        c.setHora(LocalTime.parse(dto.getHora()));
-        c.setEstado(EstadoCita.valueOf(dto.getEstado().toUpperCase()));
+
+        try {
+            c.setFecha(LocalDate.parse(dto.getFecha()));
+            c.setHora(LocalTime.parse(dto.getHora()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha u hora inválida");
+        }
+
+        try {
+            c.setEstado(EstadoCita.valueOf(dto.getEstado().toUpperCase()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado inválido");
+        }
 
         return service.guardar(c);
     }
 
     @PutMapping("/{id}")
     public Cita actualizar(@PathVariable Long id, @Valid @RequestBody CitaDTO dto) {
-
         Cita c = new Cita();
         c.setPaciente(dto.getPaciente());
         c.setOdontologo(dto.getOdontologo());
-        c.setFecha(LocalDate.parse(dto.getFecha()));
-        c.setHora(LocalTime.parse(dto.getHora()));
-        c.setEstado(EstadoCita.valueOf(dto.getEstado().toUpperCase()));
+
+        try {
+            c.setFecha(LocalDate.parse(dto.getFecha()));
+            c.setHora(LocalTime.parse(dto.getHora()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha u hora inválida");
+        }
+
+        try {
+            c.setEstado(EstadoCita.valueOf(dto.getEstado().toUpperCase()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado inválido");
+        }
 
         return service.actualizar(id, c);
     }
