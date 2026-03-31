@@ -6,6 +6,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import com.sena.api_producto.dto.CitaDTO;
+import com.sena.api_producto.model.enums.EstadoCita;
+import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @RestController
 @RequestMapping("/api/citas")
 public class CitaController {
@@ -27,7 +33,15 @@ public class CitaController {
     }
 
     @PostMapping
-    public Cita crear(@RequestBody Cita c) {
+    public Cita crear(@Valid @RequestBody CitaDTO dto) {
+
+        Cita c = new Cita();
+        c.setPaciente(dto.getPaciente());
+        c.setOdontologo(dto.getOdontologo());
+        c.setFecha(LocalDate.parse(dto.getFecha()));
+        c.setHora(LocalTime.parse(dto.getHora()));
+        c.setEstado(EstadoCita.valueOf(dto.getEstado().toUpperCase()));
+
         return service.guardar(c);
     }
 
